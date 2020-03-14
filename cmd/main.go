@@ -11,7 +11,10 @@ import (
 
 func main() {
 	r := chi.NewRouter()
-	store := event.NewInMemoryStore()
+	store, err := event.NewBoltStore("events.db", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 	r.Use(middleware.DefaultLogger)
 	r.Use(middleware.Recoverer)
 	r.Use(event.Middleware(store))
