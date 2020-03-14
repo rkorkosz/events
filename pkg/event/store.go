@@ -11,7 +11,7 @@ import (
 
 // Store describes event store methods
 type Store interface {
-	Put(Event) error
+	Put(*Event) error
 	Get(ID uuid.UUID) (*Event, error)
 }
 

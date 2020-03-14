@@ -17,7 +17,7 @@ func main() {
 	}
 	r.Use(middleware.DefaultLogger)
 	r.Use(middleware.Recoverer)
-	r.Use(event.Middleware(store))
+	r.Use(event.Middleware(store, nil))
 	r.Route("/v1", func(r chi.Router) {
 		r.Put("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("w"))
