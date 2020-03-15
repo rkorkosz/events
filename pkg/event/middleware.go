@@ -13,9 +13,11 @@ import (
 
 // DefaultOptions
 var DefaultOptions = &Options{
-	VersionExtractor: PathVersionExtractor,
-	TypeExtractor:    PathTypeExtractor,
-	Logger:           log.New(os.Stdout, "[Events]", log.LstdFlags),
+	VersionExtractor:    PathVersionExtractor,
+	TypeExtractor:       PathTypeExtractor,
+	DataSchemaExtractor: DataSchemaExtractor,
+	SubjectExtractor:    SubjectExtractor,
+	Logger:              log.New(os.Stdout, "[Events]", log.LstdFlags),
 }
 
 // ParamExtractor defines request param extractor
@@ -23,8 +25,11 @@ type ParamExtractor func(r *http.Request) string
 
 // Options contains middleware options
 type Options struct {
-	VersionExtractor, TypeExtractor ParamExtractor
-	Logger                          *log.Logger
+	VersionExtractor    ParamExtractor
+	TypeExtractor       ParamExtractor
+	DataSchemaExtractor ParamExtractor
+	SubjectExtractor    ParamExtractor
+	Logger              *log.Logger
 }
 
 // PathVersionExtractor extract version from path
@@ -35,6 +40,16 @@ func PathVersionExtractor(r *http.Request) string {
 // PathTypeExtractor extracts type from path
 func PathTypeExtractor(r *http.Request) string {
 	return strings.Split(r.URL.Path, "/")[2]
+}
+
+// DataSchemaExtractor extracts DataSchema from request
+func DataSchemaExtractor(r *http.Request) string {
+	return ""
+}
+
+// SubjectExtractor extracts Subject from request
+func SubjectExtractor(r *http.Request) string {
+	return ""
 }
 
 // Middleware stores incoming event in event store
@@ -54,6 +69,8 @@ func Middleware(store Store, opts *Options) func(next http.Handler) http.Handler
 				SpecVersion:     opts.VersionExtractor(r),
 				Type:            opts.TypeExtractor(r),
 				DataContentType: r.Header.Get("Content-Type"),
+				DataSchema:      opts.DataSchemaExtractor(r),
+				Subject:         opts.SubjectExtractor(r),
 				Time:            time.Now().UTC(),
 				Data:            rawRequest,
 			}
