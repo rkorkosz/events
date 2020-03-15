@@ -93,5 +93,5 @@ func (bs *BoltStore) Get(id uuid.UUID) (*Event, error) {
 		data := b.Get([]byte(id.String()))
 		return json.Unmarshal(data, event)
 	})
-	return event, nil
+	return event, err
 }

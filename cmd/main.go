@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,7 +21,7 @@ func main() {
 	r.Use(event.Middleware(store, nil))
 	r.Route("/v1", func(r chi.Router) {
 		r.Put("/user/{id}", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("w"))
+			fmt.Fprint(w, "ok")
 		})
 	})
 	log.Fatal(http.ListenAndServe(":8000", r))

@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func TestInMemoryStore_(t *testing.T) {
+func TestInMemoryStore(t *testing.T) {
 	store := NewInMemoryStore()
 	event := &Event{
 		ID:          uuid.New(),
