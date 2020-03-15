@@ -1,9 +1,6 @@
 package event
 
 import (
-	"bufio"
-	"bytes"
-	"net/http"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,18 +17,4 @@ type Event struct {
 	Subject         string    `json:"subject"`
 	Time            time.Time `json:"time"`
 	Data            []byte    `json:"data"`
-}
-
-// Replay sends event one more time
-func (e *Event) Replay(client *http.Client) error {
-	if client == nil {
-		client = &http.Client{}
-	}
-	b := bufio.NewReader(bytes.NewReader(e.Data))
-	req, err := http.ReadRequest(b)
-	if err != nil {
-		return err
-	}
-	_, err = client.Do(req)
-	return err
 }

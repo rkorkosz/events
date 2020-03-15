@@ -4,16 +4,18 @@ import (
 	"log"
 	"net/http"
 	"net/http/httputil"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-// DefDefaultOptions
+// DefaultOptions
 var DefaultOptions = &Options{
 	VersionExtractor: PathVersionExtractor,
 	TypeExtractor:    PathTypeExtractor,
+	Logger:           log.New(os.Stdout, "[Events]", log.LstdFlags),
 }
 
 // ParamExtractor defines request param extractor
@@ -22,6 +24,7 @@ type ParamExtractor func(r *http.Request) string
 // Options contains middleware options
 type Options struct {
 	VersionExtractor, TypeExtractor ParamExtractor
+	Logger                          *log.Logger
 }
 
 // PathVersionExtractor extract version from path
@@ -43,7 +46,7 @@ func Middleware(store Store, opts *Options) func(next http.Handler) http.Handler
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			rawRequest, err := httputil.DumpRequest(r, true)
 			if err != nil {
-				log.Println(err)
+				opts.Logger.Printf("Error dumping request: %v\n", err)
 			}
 			event := Event{
 				ID:              uuid.New(),
@@ -56,7 +59,7 @@ func Middleware(store Store, opts *Options) func(next http.Handler) http.Handler
 			}
 			err = store.Put(&event)
 			if err != nil {
-				log.Println(err)
+				opts.Logger.Printf("Error putting event to store: %v\n", err)
 			}
 			next.ServeHTTP(w, r)
 		})

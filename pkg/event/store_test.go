@@ -21,6 +21,6 @@ func TestInMemoryStore_(t *testing.T) {
 		t.Error(err)
 	}
 	if event != storedEvent {
-		t.Errorf("Wrong event version: got %s, want %s", storedEvent.SpecVersion.event.SpecVersion)
+		t.Errorf("Wrong event version: got %s, want %s", storedEvent.SpecVersion, event.SpecVersion)
 	}
 }
